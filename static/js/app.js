@@ -1,4 +1,5 @@
 const samplesJsonFile = "static/data/samples.json";
+let data = {};
 
 const elements = {
     selectDataset : d3.select("#selDataset"),
@@ -8,9 +9,15 @@ const elements = {
     divBubble : d3.select("#bubble"),
 }
 
-function optionChanged(value)
+function optionChanged(name)
 {
-    console.log(value);
+    const samples = data.samples.find(sample => sample.id === name);
+    const metadata = data.metadata.find(subdata => `${subdata.id}` === name);
+
+    populateSampleMetadata(metadata);
+    populateBar(samples);
+    populateGauge(samples);
+    populateBubble(samples);
 }
 
 async function loadData(jsonFile)
@@ -35,7 +42,27 @@ function populateSelectDataset(names)
 
 function populateSampleMetadata(metadata)
 {
+    const divSampleMetadata = elements.divSampleMetadata;
+    divSampleMetadata.html("");
+    const table = divSampleMetadata.append("table");
+    table.attr("class", "table table-bordered");
 
+    const tableHead = table.append("thead");
+    const headRow = tableHead.append("tr");
+    const keyHead = headRow.append("th");
+    keyHead.text("Key");
+    const valueHead = headRow.append("th");
+    valueHead.text("Value");
+    
+    const tableBody = table.append("tbody");
+    Object.entries(metadata).forEach(([key, value]) =>
+    {
+        const row = tableBody.append("tr");
+        const keyNode = row.append("td");
+        const valueNode = row.append("td");
+        keyNode.text(key);
+        valueNode.text(value);
+    });
 }
 
 function populateBar(samples)
@@ -55,11 +82,10 @@ function populateBubble(samples)
 
 async function init()
 {
-    const data = await loadData(samplesJsonFile);
+    data = await loadData(samplesJsonFile);
     console.log(data);
     populateSelectDataset(data.names);
     optionChanged(data.names[0]);
 }
-
 
 init();
