@@ -30,8 +30,8 @@ function optionChanged(id)
     const metadata = data.metadata.find(subdata => `${subdata.id}` === id);
 
     populateSampleMetadata(metadata);
+    populateGauge(metadata);
     populateBar(samples);
-    populateGauge(samples);
     populateBubble(samples);
 }
 
@@ -119,9 +119,38 @@ function populateBar(samples)
     Plotly.newPlot(elements.divBar.node(), traces, layout);
 }
 
-function populateGauge(samples)
+/**
+ * Creates a belly button washing guage.
+ * @param {any[]} metadata - The metadata.
+ */
+function populateGauge(metadata)
 {
+    const washTrace = 
+    {
+        domain : 
+        {
+            x: [0, 1],
+            y: [0, 1]
+        },
+        name : "Belly Button Washings", 
+        title : { text : "Scrubs per Week"},
+        value : metadata.wfreq,
+        type : "indicator",
+        mode : "gauge+number",
+        gauge : 
+        {
+            axis : { range : [0, 9] }
+        }
+    };
 
+    const traces = [washTrace];
+
+    const layout = 
+    {
+        title : `Belly Button Washing for Test Subject ${metadata.id}`
+    };
+
+    Plotly.newPlot(elements.divGauge.node(), traces, layout);
 }
 
 /**
@@ -156,9 +185,13 @@ function populateBubble(samples)
     Plotly.newPlot(elements.divBubble.node(), traces, layout);
 }
 
+/**
+ * Initializes the page.
+ */
 async function init()
 {
     data = await loadData(samplesJsonFile);
+    console.log(data);
     populateSelectDataset(data.names);
     optionChanged(data.names[0]);
 }
