@@ -102,8 +102,8 @@ function populateBar(samples)
         name : "Top OTUs",
         type : "bar",
         orientation : "h",
-        y: topIDs.map(id => `[${id}]`),
         x: topValues,
+        y: topIDs.map(id => `[${id}]`),
         text: topLabels
     }
 
@@ -112,8 +112,8 @@ function populateBar(samples)
     const layout = 
     {
         title : `Top OTUs for Test Subject ${samples.id}`,
-        yaxis : { title : "OTU ID"},
-        xaxis : { title : "Sample Values"}
+        xaxis : { title : "Sample Values"},
+        yaxis : { title : "OTU ID"}
     }
 
     Plotly.newPlot(elements.divBar.node(), traces, layout);
@@ -124,9 +124,36 @@ function populateGauge(samples)
 
 }
 
+/**
+ * Creates a bubble chart for the samples.
+ * @param {any[]} samples - The sample to chart.
+ */
 function populateBubble(samples)
 {
+    const otuTrace = 
+    {
+        name : "OTUs",
+        mode : "markers",
+        x : samples.otu_ids,
+        y : samples.sample_values,
+        text : samples.otu_labels,
+        marker :
+        {
+            color : samples.otu_ids,
+            size : samples.sample_values
+        }
+    };
 
+    const traces = [otuTrace];
+
+    const layout = 
+    {
+        title : `OTU Bubble Chart for Test Subject ${samples.id}`,
+        xaxis : { title : "OTU ID" },
+        yaxis : { title : "Sample Value" }
+    }
+
+    Plotly.newPlot(elements.divBubble.node(), traces, layout);
 }
 
 async function init()
