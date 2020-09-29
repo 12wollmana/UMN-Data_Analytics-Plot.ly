@@ -191,7 +191,6 @@ function populateBubble(samples)
 async function init()
 {
     data = await loadData(samplesJsonFile);
-    console.log(data);
     populateSelectDataset(data.names);
     optionChanged(data.names[0]);
 }
